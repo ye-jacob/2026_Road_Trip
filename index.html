@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rockies to the Pacific — A 10-Day Road Trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF3E2;
+    --sand:#F2E5C9;
+    --sand-deep:#E9D5AE;
+    --rust:#9E3417;
+    --clay:#C7592B;
+    --sun:#E68A33;
+    --gold:#D7A338;
+    --ink:#2C1A0F;
+    --ink-soft:#5A4330;
+    --sage:#6E7B4E;
+    --sky:#4E7A92;
+    --line:rgba(44,26,15,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  /* paper / grain texture */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--clay);color:var(--paper)}
+
+  /* progress bar */
+  #progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--rust),var(--sun),var(--gold));z-index:1000;transition:width .1s linear}
+
+  /* nav */
+  nav{
+    position:sticky;top:0;z-index:900;
+    background:rgba(251,243,226,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--ink);
+    display:flex;align-items:center;gap:.4rem;
+    padding:.55rem 1.2rem;overflow-x:auto;
+  }
+  nav .brand{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;font-size:1rem;color:var(--rust);white-space:nowrap;margin-right:.4rem}
+  nav a{
+    font-family:'Hanken Grotesk';font-weight:600;font-size:.82rem;
+    text-decoration:none;color:var(--ink-soft);
+    padding:.3rem .55rem;border-radius:6px;white-space:nowrap;transition:.18s;
+  }
+  nav a:hover{background:var(--sand-deep);color:var(--ink)}
+  nav::-webkit-scrollbar{height:0}
+
+  /* hero */
+  header{
+    position:relative;padding:clamp(3rem,9vw,7rem) 1.5rem clamp(2rem,5vw,4rem);
+    text-align:center;overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 120%, rgba(230,138,51,.35), transparent 55%),
+      linear-gradient(180deg,var(--sand) 0%, var(--paper) 100%);
+    border-bottom:2px solid var(--ink);
+  }
+  .sun-badge{
+    width:clamp(80px,16vw,130px);height:clamp(80px,16vw,130px);margin:0 auto 1.4rem;
+    border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold),var(--clay) 70%,var(--rust));
+    box-shadow:0 0 0 8px rgba(199,89,43,.18), 0 0 0 16px rgba(199,89,43,.08);
+    animation:rise 1.2s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes rise{from{transform:translateY(40px) scale(.7);opacity:0}to{transform:none;opacity:1}}
+  header .kicker{font-family:'Hanken Grotesk';font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:.8rem;color:var(--clay);margin-bottom:.8rem}
+  header h1{
+    font-family:'Fraunces';font-weight:900;font-size:clamp(2.6rem,8vw,6rem);line-height:.95;
+    letter-spacing:-.02em;color:var(--ink);margin-bottom:1.1rem;
+  }
+  header h1 em{font-style:italic;color:var(--rust)}
+  header .sub{max-width:640px;margin:0 auto;font-size:clamp(1rem,2.2vw,1.2rem);color:var(--ink-soft)}
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(1.2rem,5vw,3.5rem);margin-top:2.4rem}
+  .stat{text-align:center}
+  .stat .n{font-family:'Fraunces';font-weight:900;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--rust);line-height:1}
+  .stat .l{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:.3rem}
+
+  /* route ribbon */
+  .ribbon{background:var(--ink);color:var(--paper);padding:1.3rem 1rem;overflow:hidden;border-bottom:2px solid var(--ink)}
+  .ribbon .track{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem .9rem;max-width:1100px;margin:0 auto}
+  .ribbon .city{font-family:'Bricolage Grotesque';font-weight:800;font-size:clamp(.85rem,2.2vw,1.15rem);letter-spacing:-.01em}
+  .ribbon .arrow{color:var(--sun);font-weight:800}
+
+  /* layout */
+  main{max-width:1080px;margin:0 auto;padding:0 1.2rem}
+  .intro{padding:clamp(2.5rem,6vw,4.5rem) 0 1rem;max-width:760px}
+  .intro h2{font-family:'Fraunces';font-weight:900;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:1rem;letter-spacing:-.01em}
+  .intro p{font-size:1.05rem;color:var(--ink-soft);margin-bottom:1rem}
+
+  /* day card */
+  .day{position:relative;padding:clamp(2.2rem,5vw,3.4rem) 0;border-top:2px solid var(--line)}
+  .day-head{display:flex;align-items:flex-start;gap:1.2rem;margin-bottom:1.6rem;flex-wrap:wrap}
+  .day-num{
+    font-family:'Fraunces';font-weight:900;font-size:clamp(3rem,9vw,5.2rem);line-height:.8;
+    color:transparent;-webkit-text-stroke:2px var(--clay);text-stroke:2px var(--clay);
+    flex-shrink:0;
+  }
+  .day-titles{flex:1;min-width:240px}
+  .day-titles .route{font-family:'Hanken Grotesk';font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;color:var(--clay);margin-bottom:.35rem}
+  .day-titles h3{font-family:'Fraunces';font-weight:900;font-size:clamp(1.5rem,3.6vw,2.1rem);line-height:1.05;letter-spacing:-.01em}
+  .drive{display:inline-flex;align-items:center;gap:.45rem;margin-top:.7rem;background:var(--sand);border:1.5px solid var(--ink);border-radius:30px;padding:.3rem .85rem;font-weight:600;font-size:.82rem}
+  .drive svg{width:15px;height:15px}
+
+  /* scene illustration */
+  .scene{width:100%;height:clamp(90px,16vw,150px);display:block;border-radius:14px;border:2px solid var(--ink);margin-bottom:1.6rem;overflow:hidden}
+
+  .stops{display:grid;gap:1rem}
+  .stop{
+    background:var(--paper);border:2px solid var(--ink);border-radius:14px;padding:1.1rem 1.2rem;
+    box-shadow:5px 5px 0 rgba(44,26,15,.12);transition:.2s;
+  }
+  .stop:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 rgba(158,52,23,.22)}
+  .stop h4{font-family:'Fraunces';font-weight:600;font-size:1.18rem;display:flex;align-items:center;gap:.55rem;margin-bottom:.35rem;letter-spacing:-.01em}
+  .pin{width:20px;height:20px;flex-shrink:0;color:var(--clay)}
+  .stop .tag{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper);background:var(--sage);padding:.12rem .5rem;border-radius:20px;margin-left:auto;white-space:nowrap}
+  .stop .tag.must{background:var(--rust)}
+  .stop .tag.option{background:var(--sky)}
+  .stop p{color:var(--ink-soft);font-size:.96rem}
+
+  .day-foot{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.4rem}
+  @media(max-width:620px){.day-foot{grid-template-columns:1fr}}
+  .foot-box{border:2px dashed var(--ink);border-radius:12px;padding:.85rem 1rem;background:var(--sand)}
+  .foot-box .lbl{display:flex;align-items:center;gap:.4rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.72rem;color:var(--rust);margin-bottom:.25rem}
+  .foot-box .lbl svg{width:15px;height:15px}
+  .foot-box p{font-size:.9rem;color:var(--ink)}
+
+  /* tips section */
+  .know{background:var(--ink);color:var(--paper);margin-top:3rem;padding:clamp(2.5rem,6vw,4.5rem) 1.2rem;border-top:3px solid var(--rust)}
+  .know-inner{max-width:1000px;margin:0 auto}
+  .know h2{font-family:'Fraunces';font-weight:900;font-size:clamp(1.7rem,4.5vw,2.6rem);margin-bottom:.4rem;text-align:center}
+  .know .sub2{text-align:center;color:rgba(251,243,226,.7);margin-bottom:2.4rem}
+  .know-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.2rem}
+  .know-card{background:rgba(251,243,226,.06);border:1.5px solid rgba(251,243,226,.22);border-radius:14px;padding:1.2rem}
+  .know-card h4{font-family:'Fraunces';font-weight:600;font-size:1.12rem;color:var(--gold);margin-bottom:.5rem}
+  .know-card p{font-size:.92rem;color:rgba(251,243,226,.82)}
+  .know-card p+p{margin-top:.5rem}
+
+  footer{background:var(--sand);text-align:center;padding:2.4rem 1rem;border-top:2px solid var(--ink)}
+  footer .big{font-family:'Fraunces';font-weight:900;font-style:italic;font-size:clamp(1.4rem,4vw,2rem);color:var(--rust)}
+  footer p{color:var(--ink-soft);font-size:.85rem;margin-top:.5rem}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav id="nav">
+  <span class="brand">⛰ ROCKIES→PACIFIC</span>
+  <a href="#day1">D1</a><a href="#day2">D2</a><a href="#day3">D3</a><a href="#day4">D4</a><a href="#day5">D5</a><a href="#day6">D6</a><a href="#day7">D7</a><a href="#day8">D8</a><a href="#day9">D9</a><a href="#day10">D10</a>
+  <a href="#know" style="color:var(--rust);font-weight:700">Know Before You Go</a>
+</nav>
+
+<header>
+  <div class="sun-badge"></div>
+  <div class="kicker">Colorado&nbsp;·&nbsp;Utah&nbsp;·&nbsp;Arizona&nbsp;·&nbsp;Nevada&nbsp;·&nbsp;California</div>
+  <h1>From the Rockies<br>to the <em>Pacific</em></h1>
+  <p class="sub">Ten days, six states' worth of scenery, and a string of the most jaw-dropping landscapes in the American West — from Colorado Springs to San Francisco.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">10</div><div class="l">Days</div></div>
+    <div class="stat"><div class="n">~1,950</div><div class="l">Miles</div></div>
+    <div class="stat"><div class="n">6</div><div class="l">National Parks</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">States</div></div>
+  </div>
+</header>
+
+<div class="ribbon">
+  <div class="track">
+    <span class="city">Colorado Springs</span><span class="arrow">→</span>
+    <span class="city">Moab</span><span class="arrow">→</span>
+    <span class="city">Zion</span><span class="arrow">→</span>
+    <span class="city">Page</span><span class="arrow">→</span>
+    <span class="city">Grand Canyon</span><span class="arrow">→</span>
+    <span class="city">Las Vegas</span><span class="arrow">→</span>
+    <span class="city">Yosemite</span><span class="arrow">→</span>
+    <span class="city">San Francisco</span>
+  </div>
+</div>
+
+<main>
+  <section class="intro reveal">
+    <h2>The big picture</h2>
+    <p>This route trades altitude for desert and desert for granite: you'll start in the Colorado high country, drop into Utah's red-rock canyon country around Moab, thread the Mighty 5 toward Zion, peer into the Grand Canyon, hit the neon of Las Vegas, climb the Eastern Sierra into Yosemite, and coast down to the bay.</p>
+    <p>The pacing front-loads the parks (where you'll want full days) and saves the longest drive — Las Vegas to Yosemite — for Day 9. Each day below lists the drive, the stops worth pulling over for, where to sleep, and a tip to make it smoother.</p>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="day reveal" id="day1">
+    <div class="day-head">
+      <div class="day-num">01</div>
+      <div class="day-titles">
+        <div class="route">Colorado Springs → Moab, UT</div>
+        <h3>Over the Rockies into Red-Rock Country</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~5.5 hrs · 350 mi</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#5E83A0"/><circle cx="640" cy="48" r="26" fill="#F2E5C9"/><path d="M0 90 L120 30 L230 95 L340 40 L470 100 L600 50 L720 95 L800 70 L800 150 L0 150Z" fill="#3A5468"/><path d="M0 120 L150 80 L300 125 L450 85 L620 128 L800 100 L800 150 L0 150Z" fill="#9E3417"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Royal Gorge Bridge <span class="tag option">Optional</span></h4><p>A quick detour near Cañon City to one of the highest suspension bridges in the U.S., spanning 955 ft above the Arkansas River. Walk across or skip the park and just admire the gorge.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Black Canyon of the Gunnison NP <span class="tag must">Highlight</span></h4><p>Near Montrose — a dramatically narrow, sheer-walled chasm that's far less crowded than the famous parks. The South Rim Road's overlooks (Gunnison Point, Painted Wall) take an hour or two and are genuinely breathtaking.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Colorado National Monument <span class="tag option">Optional</span></h4><p>Just outside Grand Junction, Rim Rock Drive winds past red sandstone canyons and monoliths — a perfect golden-hour warm-up for the desert ahead if you have daylight left.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Moab — the basecamp for Arches &amp; Canyonlands.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Leave early. It's a long mountain-to-desert day, so pick one or two stops rather than all three.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="day reveal" id="day2">
+    <div class="day-head">
+      <div class="day-num">02</div>
+      <div class="day-titles">
+        <div class="route">Moab, UT — basecamp</div>
+        <h3>Arches National Park</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Local · short drives</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#E68A33"/><circle cx="160" cy="50" r="30" fill="#F2E5C9"/><path d="M520 150 Q520 60 600 60 Q680 60 680 150 L640 150 L640 95 Q640 80 600 80 Q560 80 560 95 L560 150Z" fill="#9E3417"/><path d="M0 150 L0 110 L120 110 L120 150Z M740 150 L740 90 L800 90 L800 150Z" fill="#C7592B"/><rect y="138" width="800" height="12" fill="#8A2E14"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Delicate Arch <span class="tag must">Must-do</span></h4><p>Utah's icon. A 3-mile round-trip hike with no shade leads to the freestanding arch framing the La Sal Mountains — magic at sunset. Go early morning or late afternoon to dodge the heat.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>The Windows Section <span class="tag must">Highlight</span></h4><p>North &amp; South Window, Turret Arch, and Double Arch are all reachable on short, easy paths clustered together — the best arch-density-per-step in the park.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Devils Garden &amp; Landscape Arch</h4><p>An easy walk to Landscape Arch, one of the longest natural stone spans in the world. Continue further for Partition and Double O arches if you've got energy.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Balanced Rock &amp; Park Avenue</h4><p>Two quick roadside stops — a boulder perched impossibly on a spire, and a short walk between towering sandstone walls near the entrance.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Moab again — dinner and drinks on Main Street.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>A timed-entry reservation is required to enter Arches in peak season (spring–fall mornings). Book ahead at recreation.gov.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="day reveal" id="day3">
+    <div class="day-head">
+      <div class="day-num">03</div>
+      <div class="day-titles">
+        <div class="route">Moab, UT — basecamp</div>
+        <h3>Canyonlands &amp; Dead Horse Point</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Local · ~45 min each way</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#C7592B"/><circle cx="650" cy="45" r="24" fill="#F2E5C9"/><path d="M0 150 L0 80 L200 80 L200 110 L400 110 L400 70 L600 70 L600 100 L800 100 L800 150Z" fill="#9E3417"/><path d="M0 150 L0 125 L800 125 L800 150Z" fill="#7A2811"/><path d="M250 80 L250 150 M520 70 L520 150" stroke="#7A2811" stroke-width="3"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Mesa Arch at Sunrise <span class="tag must">Must-do</span></h4><p>In the Island in the Sky district. The rising sun lights the underside of this cliff-edge arch into a glowing red — the most photographed sunrise in Utah. Arrive 45 min early to claim a spot.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Grand View Point &amp; Green River Overlook <span class="tag must">Highlight</span></h4><p>Sweeping overlooks across a 1,000-ft-deep maze of canyons carved by the Colorado and Green rivers. The short Grand View rim walk is the payoff.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Dead Horse Point State Park <span class="tag must">Sunset</span></h4><p>A gooseneck bend of the Colorado River 2,000 ft below — arguably an even better view than the national park, and the perfect sunset finale before heading back to Moab.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Optional adrenaline</h4><p>Swap an afternoon for a Colorado River raft trip, a 4x4 tour on Hell's Revenge, or mountain biking — Moab is the adventure capital of the desert.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Moab — last night before the long push west.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Fill the tank and stock water/snacks tonight — tomorrow crosses remote stretches of central Utah.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 4 -->
+  <section class="day reveal" id="day4">
+    <div class="day-head">
+      <div class="day-num">04</div>
+      <div class="day-titles">
+        <div class="route">Moab → Zion (Springdale), UT</div>
+        <h3>Across Utah to Zion's Gates</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~5 hrs direct · ~6.5 hrs scenic</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#D7A338"/><circle cx="120" cy="50" r="26" fill="#FBF3E2"/><path d="M0 150 L80 60 L160 150Z M180 150 L280 40 L380 150Z M400 150 L520 70 L640 150Z M620 150 L720 50 L800 150Z" fill="#9E3417"/><path d="M0 130 L800 118 L800 150 L0 150Z" fill="#6E7B4E"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Capitol Reef NP <span class="tag option">Scenic route</span></h4><p>The least-visited of Utah's Mighty 5. Drive the Scenic Drive past towering cliffs, see ancient petroglyphs, and grab a fresh fruit pie at the historic Gifford Homestead in Fruita.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Scenic Byway 12 <span class="tag option">Optional</span></h4><p>Frequently rated one of America's most beautiful drives — winding over slickrock ridges and through Grand Staircase-Escalante. Adds time but unforgettable.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Direct route via I-70 / US-89</h4><p>If you'd rather arrive early and rest up for Zion, the interstate route is fast and still scenic through the San Rafael Swell.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Springdale — the walkable town right at Zion's doorstep.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Decide the route by your energy: the Capitol Reef detour is glorious but you'll be tired for Zion's big hikes tomorrow.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 5 -->
+  <section class="day reveal" id="day5">
+    <div class="day-head">
+      <div class="day-num">05</div>
+      <div class="day-titles">
+        <div class="route">Zion National Park, UT</div>
+        <h3>Into the Great Canyon</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Shuttle-based · no driving in canyon</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#4E7A92"/><path d="M0 150 L0 30 L180 20 L260 60 L320 25 L420 55 L520 15 L640 50 L740 25 L800 45 L800 150Z" fill="#C7592B"/><path d="M0 150 L0 90 L140 80 L260 110 L400 85 L560 115 L700 90 L800 105 L800 150Z" fill="#9E3417"/><path d="M340 150 Q380 110 400 150 Q420 110 460 150Z" fill="#6E7B4E"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Angels Landing <span class="tag must">Must-do*</span></h4><p>The legendary chain-assisted climb along a knife-edge ridge to a 1,488-ft perch over the canyon. Requires a permit via seasonal lottery ($6 to apply) — and a head for heights. No permit? Scout Lookout still delivers huge views.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>The Narrows <span class="tag must">Must-do</span></h4><p>Wade straight up the Virgin River between 1,000-ft walls that close in around you. Rent neoprene socks, canyon shoes, and a walking stick from a Springdale outfitter. Start early.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Canyon Overlook Trail</h4><p>A short (1-mile) trail near the Mt. Carmel tunnel with a massive payoff view down Zion Canyon — great for a lower-effort evening if your legs are spent.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Springdale once more.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Apply for the Angels Landing permit weeks ahead (a day-before lottery also runs). The canyon shuttle is mandatory most of the year — park in town and ride in.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 6 -->
+  <section class="day reveal" id="day6">
+    <div class="day-head">
+      <div class="day-num">06</div>
+      <div class="day-titles">
+        <div class="route">Zion → Page → Grand Canyon, AZ</div>
+        <h3>Slot Canyons &amp; the South Rim</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~4.5 hrs driving + stops</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#E68A33"/><path d="M0 150 L0 70 Q200 130 360 60 Q380 120 420 70 Q600 130 800 60 L800 150Z" fill="#4E7A92"/><path d="M0 150 L0 95 Q220 60 360 110 Q520 60 800 100 L800 150Z" fill="#9E3417"/><circle cx="700" cy="40" r="22" fill="#FBF3E2"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Horseshoe Bend <span class="tag must">Highlight</span></h4><p>In Page, AZ — a short walk from the lot to the rim above the Colorado River's perfect 270° bend, 1,000 ft below. Best light is midday-to-afternoon when sun reaches the canyon floor.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Antelope Canyon <span class="tag must">Book ahead</span></h4><p>The surreal, wave-like slot canyon (Upper or Lower) glowing with shafts of light. Only accessible on a Navajo-guided tour — reserve weeks in advance, especially in summer.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Grand Canyon South Rim — Sunset <span class="tag must">Must-do</span></h4><p>Roll into the park by evening and catch first light fade at Mather Point or Hopi Point. The first glimpse over the rim is a moment you don't forget.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Grand Canyon Village (book early) or Tusayan just outside.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Arizona doesn't observe daylight saving — your phone clock may jump. Plan tour and sunset times accordingly.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 7 -->
+  <section class="day reveal" id="day7">
+    <div class="day-head">
+      <div class="day-num">07</div>
+      <div class="day-titles">
+        <div class="route">Grand Canyon National Park, AZ</div>
+        <h3>A Full Day on the Rim</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Shuttle &amp; short drives</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#D7A338"/><circle cx="140" cy="42" r="24" fill="#FBF3E2"/><path d="M0 150 L0 60 L150 90 L300 55 L460 95 L620 60 L800 100 L800 150Z" fill="#C7592B"/><path d="M0 150 L0 95 L180 120 L360 90 L560 125 L760 95 L800 110 L800 150Z" fill="#9E3417"/><path d="M0 150 L200 135 L400 150 L600 135 L800 150Z" fill="#7A2811"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Mather Point at Sunrise <span class="tag must">Must-do</span></h4><p>The classic overlook, steps from the visitor center, with the canyon catching the first golden light. Then stroll the paved Rim Trail toward Yavapai Point for quieter angles.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Bright Angel Trail <span class="tag must">Highlight</span></h4><p>Descend a bit into the canyon for a different perspective — the 1.5-Mile Resthouse is a great turnaround. Remember: going down is optional, coming up is mandatory. Carry plenty of water.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Desert View Drive &amp; Watchtower</h4><p>A 25-mile scenic drive east past panoramic pullouts, ending at the Desert View Watchtower designed by Mary Colter — climb it for a 360° view.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Hermit Road for Sunset <span class="tag must">Sunset</span></h4><p>Take the free shuttle out to Hopi or Mohave Point for the day's grand finale as the canyon walls glow orange and purple.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Grand Canyon / Tusayan, or push to Williams on Route 66.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>The free park shuttles are the easiest way around the rim — parking near viewpoints fills fast by mid-morning.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 8 -->
+  <section class="day reveal" id="day8">
+    <div class="day-head">
+      <div class="day-num">08</div>
+      <div class="day-titles">
+        <div class="route">Grand Canyon → Las Vegas, NV</div>
+        <h3>Route 66, the Dam &amp; the Strip</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~4.5 hrs · 270 mi</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><defs><linearGradient id="vegas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A2A55"/><stop offset="1" stop-color="#C7592B"/></linearGradient></defs><rect width="800" height="150" fill="url(#vegas)"/><circle cx="660" cy="40" r="20" fill="#F2E5C9"/><g fill="#1E1630"><rect x="120" y="80" width="40" height="70"/><rect x="180" y="55" width="30" height="95"/><rect x="230" y="95" width="50" height="55"/><rect x="300" y="40" width="36" height="110"/><rect x="360" y="75" width="44" height="75"/><rect x="430" y="60" width="28" height="90"/><rect x="480" y="100" width="60" height="50"/></g><g fill="#E68A33"><rect x="130" y="90" width="6" height="6"/><rect x="190" y="70" width="6" height="6"/><rect x="312" y="55" width="6" height="6"/><rect x="372" y="90" width="6" height="6"/><rect x="440" y="75" width="6" height="6"/></g></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Route 66 in Seligman <span class="tag option">Optional</span></h4><p>The kitschy birthplace of the historic Route 66 revival — vintage diners, neon signs, and old gas pumps. A fun, nostalgic leg-stretch.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Hoover Dam <span class="tag must">Highlight</span></h4><p>An engineering marvel straddling the AZ/NV line. Walk across the Mike O'Callaghan–Pat Tillman Bridge for the best view of the dam and Black Canyon below.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>The Strip after dark <span class="tag must">Must-do</span></h4><p>Watch the Bellagio fountains, wander the Venetian's canals, and soak in the spectacle. After a week of desert silence, the neon hits different. A proper meal and a real bed await.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>A Strip hotel — splurge a little; you've earned it.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Crossing into Nevada you gain an hour (back to Pacific time). Hoover Dam lots fill early — arrive before midday.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 9 -->
+  <section class="day reveal" id="day9">
+    <div class="day-head">
+      <div class="day-num">09</div>
+      <div class="day-titles">
+        <div class="route">Las Vegas → Eastern Sierra / Yosemite, CA</div>
+        <h3>The Long Haul to the Sierra</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~7.5 hrs (longest day)</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><rect width="800" height="150" fill="#5E83A0"/><path d="M0 150 L120 50 L240 150Z M200 150 L360 25 L520 150Z M460 150 L620 45 L780 150Z M680 150 L800 70 L800 150Z" fill="#4A6E5A"/><path d="M310 60 L360 25 L410 60Z M580 75 L620 45 L660 75Z" fill="#FBF3E2"/><path d="M0 150 L0 130 L800 122 L800 150Z" fill="#3A5468"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Mono Lake <span class="tag must">Highlight</span></h4><p>Near Lee Vining — an ancient saline lake studded with otherworldly tufa towers (limestone spires). The South Tufa boardwalk is a surreal, quick stop before the climb into the park.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Tioga Pass &amp; Tuolumne Meadows <span class="tag must">Summer only</span></h4><p>The spectacular eastern entrance climbs to 9,943 ft past alpine lakes and granite domes. <strong>Tioga Pass (CA-120) is only open roughly late May/June–October</strong> — check status before you go.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Winter alternative <span class="tag option">If pass is closed</span></h4><p>If Tioga is closed, you'll route the long way around via Bakersfield and enter through the south (Hwy 41) — budget closer to 9+ hours and consider an overnight in Mammoth or Bishop.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>Inside the park, Lee Vining, Mariposa, or Oakhurst — book very early.</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>This is the toughest driving day — fuel up in Vegas and again at Tonopah/Lee Vining; long stretches have no services.</p></div>
+    </div>
+  </section>
+
+  <!-- DAY 10 -->
+  <section class="day reveal" id="day10">
+    <div class="day-head">
+      <div class="day-num">10</div>
+      <div class="day-titles">
+        <div class="route">Yosemite → San Francisco, CA</div>
+        <h3>Granite Giants to the Golden Gate</h3>
+        <span class="drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>~4 hrs · 190 mi (Valley → SF)</span>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 800 150" preserveAspectRatio="none"><defs><linearGradient id="bay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E68A33"/><stop offset="1" stop-color="#D7A338"/></linearGradient></defs><rect width="800" height="150" fill="url(#bay)"/><path d="M0 150 L0 60 L100 65 L100 150Z M120 150 L120 35 L210 40 L210 150Z" fill="#6E7B4E"/><g stroke="#9E3417" stroke-width="6" fill="none"><path d="M540 150 L540 40 M700 150 L700 40"/><path d="M500 70 Q620 25 740 70"/><path d="M500 110 Q620 70 740 110"/></g><path d="M540 40 L540 70 M700 40 L700 70" stroke="#9E3417" stroke-width="6"/></svg>
+    <div class="stops">
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Tunnel View <span class="tag must">Must-do</span></h4><p>The postcard: El Capitan, Bridalveil Fall, and Half Dome framed in one sweeping vista. Best in morning light. The single most iconic view in Yosemite.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>Yosemite Valley Loop <span class="tag must">Highlight</span></h4><p>Drive the valley floor beneath El Capitan and Half Dome, walk to the base of Bridalveil Fall, and stop at Cook's Meadow for the classic Half Dome reflection.</p></div>
+      <div class="stop"><h4><svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>San Francisco — the finish line <span class="tag must">Must-do</span></h4><p>Arrive by evening for the Golden Gate Bridge, Fisherman's Wharf and the Pier 39 sea lions, a cable-car ride, and a well-earned celebratory dinner. Journey complete.</p></div>
+    </div>
+    <div class="day-foot">
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>Sleep</div><p>San Francisco — you made it coast to coast (well, Rockies to coast).</p></div>
+      <div class="foot-box"><div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Tip</div><p>Leave Yosemite Valley by early afternoon to beat traffic into the Bay Area. A peak-season day-use reservation may be required to enter the park.</p></div>
+    </div>
+  </section>
+</main>
+
+<!-- KNOW BEFORE YOU GO -->
+<section class="know" id="know">
+  <div class="know-inner">
+    <h2>Know Before You Go</h2>
+    <p class="sub2">A few things that make this trip run smoothly.</p>
+    <div class="know-grid">
+      <div class="know-card">
+        <h4>🎟 Permits &amp; Reservations</h4>
+        <p>Book these well ahead: <strong>Arches</strong> timed-entry ticket (peak season), <strong>Angels Landing</strong> permit lottery, <strong>Antelope Canyon</strong> Navajo-guided tour, and a <strong>Yosemite</strong> peak-season day-use reservation. Park lodges sell out months in advance.</p>
+      </div>
+      <div class="know-card">
+        <h4>🏔 Get the Parks Pass</h4>
+        <p>You'll hit 5+ national park sites. The <strong>America the Beautiful</strong> annual pass ($80) pays for itself almost immediately and covers everyone in your vehicle.</p>
+      </div>
+      <div class="know-card">
+        <h4>❄ Seasonal Watch-out</h4>
+        <p><strong>Tioga Pass (Day 9)</strong> typically opens only late May/June through October. Outside that window you must detour around the southern Sierra — adding hours. Always check current road status before driving.</p>
+      </div>
+      <div class="know-card">
+        <h4>🕐 Time Zones</h4>
+        <p>You'll cross from Mountain to Pacific time. Note <strong>Arizona doesn't observe daylight saving</strong>, so clocks can shift unexpectedly around the Grand Canyon and Page.</p>
+      </div>
+      <div class="know-card">
+        <h4>💧 Desert Smarts</h4>
+        <p>Carry far more water than you think — summer rim and canyon temps are extreme. Fuel up whenever you're below half a tank; some stretches (central Utah, Nevada) have long gaps between stations.</p>
+      </div>
+      <div class="know-card">
+        <h4>🌅 Beat the Crowds</h4>
+        <p>Sunrise is your secret weapon — Mesa Arch, Delicate Arch, and Mather Point are transcendent at dawn and mobbed by mid-morning. Early starts also dodge afternoon desert heat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="big">"Rockies to the Pacific" — 10 days, 5 states, one unforgettable drive.</div>
+  <p>An itinerary built to be flexible — swap stops, add nights, follow the light. Drive times are estimates; always check live road &amp; weather conditions.</p>
+</footer>
+
+<script>
+  // progress bar
+  const prog=document.getElementById('progress');
+  window.addEventListener('scroll',()=>{
+    const h=document.documentElement;
+    const pct=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;
+    prog.style.width=pct+'%';
+  });
+  // reveal on scroll
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
